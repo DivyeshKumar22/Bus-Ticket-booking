@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User login page</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </head>
+  <body>
+  
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <center>
+            <br />
+            <br />
+            <h1>User Login</h1>
+          </center>
+          <form id="loginForm">
+            <div class="form-group">
+              <label for="user">Username:</label>
+              <input type="text" class="form-control" id="usr" />
+            </div>
+            <div class="form-group">
+              <label for="pwd">Password</label>
+              <input type="password" class="form-control" id="pwd" />
+            </div>
+            <div class="form-group text-right">
+              <!--<a href="forgot_user_password_page.html">Forgot Password ?</a>-->
+              <a th:href="@{forgot_user_password}">Forgot Password ?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                <!--<a
+                  href="user_dashboard.html"
+                  style="color: white; text-decoration: none"
+            >-->
+                <!--<a th:href="@{user_dashboard}">
+                  Login
+                </a>-->
+                Login
+              </button>
+
+            <br />
+
+            <div class="form-group">
+              <br />
+              <center>
+                if new user ? <br />
+                <!--<a href="user_registration_page.html">-->
+                <a th:href="@{user_registration}">
+                  <button type="button" class="btn btn-link">
+                    Register Here
+                  </button>
+                </a>
+              </center>
+            </div>
+          </form>
+          <br />
+          <div id="errorContainer" class="text-center"></div>
+          <div id="messageContainer" class="text-center"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        $("#loginForm").submit(function (e) {
+          e.preventDefault();
+          const username = $("#usr").val();
+          const password = $("#pwd").val();
+
+          $.get(
+            `/api/login?username=${username}&password=${password}`,
+            function (data, status) {
+              if (data.status === 200) {
+                console.log(data);
+                $("#messageContainer").html(`
+                <div class="alert alert-success">
+                  <strong>Success!</strong> Logged in successfully.
+                </div>
+              `);
+                localStorage.setItem("aadhar", data.message);
+                window.location.href = `/user_dashboard`;
+              } else {
+                $("#messageContainer").html(`
+                <div class="alert alert-danger">
+                  <strong>Error!</strong> Invalid username or password.
+                </div>
+              `);
+              }
+            }
+          ).fail(function () {
+            $("#messageContainer").html(`
+              <div class="alert alert-danger">
+                <strong>Error!</strong> Unable to connect to the server. Please try again later.
+              </div>
+            `);
+          });
+        });
+      });
+    </script>
+  </body>
+</html> 
